@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, TextInput, Button, ScrollView } from 'react-native';
+import { StyleSheet, Text, View, TextInput, Button, ScrollView, Pressable } from 'react-native';
 
 export default function App() {
   const [note1, setNote1] = useState('');
@@ -46,7 +46,6 @@ export default function App() {
           placeholder="Nota 1"
           onChangeText={(value) => setNote1(value)}
         />
-        <Button title="Limpar" onPress={() => clearNote(setNote1)} />
       </View>
 
       <View style={styles.inputContainer}>
@@ -58,11 +57,10 @@ export default function App() {
           placeholder="Nota 2"
           onChangeText={(value) => setNote2(value)}
         />
-        <Button title="Limpar" onPress={() => clearNote(setNote2)} />
       </View>
 
       <View style={styles.inputContainer}>
-        <Text>Nota 3 (opcional):</Text>
+        <Text>Nota 3:</Text>
         <TextInput
           style={styles.input}
           keyboardType="numeric"
@@ -70,11 +68,11 @@ export default function App() {
           placeholder="Nota 3"
           onChangeText={(value) => setNote3(value)}
         />
-        <Button title="Limpar" onPress={() => clearNote(setNote3)} />
+
       </View>
 
-      <Text style={styles.resultText}>Resultado em Tempo Real:</Text>
-      <Text style={styles.averageText}>Média Final: {average}</Text>
+      <Text style={styles.resultText}>Resultado</Text>
+      <Text style={styles.averageText}>{average}</Text>
     </ScrollView>
   );
 }
