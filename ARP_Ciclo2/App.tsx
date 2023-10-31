@@ -1,134 +1,122 @@
-// Universidade Evangelica de Goias
-// Caique Oliveira Carvalho - 2111304
-// Programacao para dispositivos moveis
-
-import { StatusBar } from 'expo-status-bar';
-import React, { useState } from 'react';
-import { StyleSheet, Text, View, TextInput, Button } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, Text, View, TextInput, Button, ScrollView } from 'react-native';
 
 export default function App() {
-  const [note1, setNote1] = useState("");
-  const [note2, setNote2] = useState("");
-  const [note3, setNote3] = useState("");
-  const [average, setAverage] = useState(null);
-
-  const isNumeric = (value) => value === "" || (!isNaN(parseFloat(value)) && isFinite(value));
+  const [note1, setNote1] = useState('');
+  const [note2, setNote2] = useState('');
+  const [note3, setNote3] = useState('');
+  const [average, setAverage] = useState('0.00');
 
   const calculate = () => {
-    if (isNumeric(note1) && isNumeric(note2)) {
-      const n1 = parseFloat(note1);
-      const n2 = parseFloat(note2);
-      const n3 = isNumeric(note3) ? parseFloat(note3) : 0;
+    const n1 = parseFloat(note1) || 0;
+    const n2 = parseFloat(note2) || 0;
+    const n3 = parseFloat(note3) || 0;
 
-      const validNotes = [n1, n2, n3].filter((note) => note >= 0 && note <= 100);
-      const validNotesCount = validNotes.length;
+    const validNotes = [n1, n2, n3].filter((note) => note >= 0 && note <= 100);
 
-      if (validNotesCount > 0) {
-        if (validNotesCount === 3) {
-          const result = validNotes.reduce((sum, note) => sum + note, 0) / 3;
-          setAverage(result.toFixed(2));
-        } else {
-          const currentAverage = validNotes.reduce((sum, note) => sum + note, 0) / validNotesCount;
-          const remainingNeeded = 60 - currentAverage;
-          setAverage(remainingNeeded.toFixed(2));
-        }
-      } else {
-        setAverage("Notas inválidas");
-      }
+    if (validNotes.length > 0) {
+      const sumOfValidNotes = validNotes.reduce((sum, note) => sum + note, 0);
+      const averageResult = sumOfValidNotes / validNotes.length;
+      setAverage(averageResult.toFixed(2));
+    } else {
+      setAverage('0.00');
     }
   };
 
-  const clearNote1 = () => {
-    setNote1("");
-    setAverage(null);
+  const clearNote = (setter) => {
+    setter('');
+    calculate();
   };
 
-  const clearNote2 = () => {
-    setNote2("");
-    setAverage(null);
-  };
-
-  const clearNote3 = () => {
-    setNote3("");
-    setAverage(null);
-  };
+  useEffect(() => {
+    calculate();
+  }, [note1, note2, note3]);
 
   return (
-    <View style={styles.container}>
-      <Text>Nota 1:</Text>
-      <TextInput
-        style={styles.input}
-        keyboardType="numeric"
-        value={note1}
-        placeholder="Insira a Nota 1"
-        onChangeText={(text) => {
-          if (isNumeric(text) && parseFloat(text) >= 0 && parseFloat(text) <= 100) {
-            setNote1(text);
-          }
-        }}
-      />
-      <View style={styles.buttonContainer}>
-        <Button title="Limpar" onPress={clearNote1} />
+    <ScrollView contentContainerStyle={styles.container}>
+      <Text style={styles.title}>NotaSegura</Text>
+      <Text style={styles.instructions}>Insira suas notas (0-100):</Text>
+
+      <View style={styles.inputContainer}>
+        <Text>Nota 1:</Text>
+        <TextInput
+          style={styles.input}
+          keyboardType="numeric"
+          value={note1}
+          placeholder="Nota 1"
+          onChangeText={(value) => setNote1(value)}
+        />
+        <Button title="Limpar" onPress={() => clearNote(setNote1)} />
       </View>
 
-      <Text>Nota 2:</Text>
-      <TextInput
-        style={styles.input}
-        keyboardType="numeric"
-        value={note2}
-        placeholder="Insira a Nota 2"
-        onChangeText={(text) => {
-          if (isNumeric(text) && parseFloat(text) >= 0 && parseFloat(text) <= 100) {
-            setNote2(text);
-          }
-        }}
-      />
-      <View style={styles.buttonContainer}>
-        <Button title="Limpar" onPress={clearNote2} />
+      <View style={styles.inputContainer}>
+        <Text>Nota 2:</Text>
+        <TextInput
+          style={styles.input}
+          keyboardType="numeric"
+          value={note2}
+          placeholder="Nota 2"
+          onChangeText={(value) => setNote2(value)}
+        />
+        <Button title="Limpar" onPress={() => clearNote(setNote2)} />
       </View>
 
-      <Text>Nota 3 (opcional):</Text>
-      <TextInput
-        style={styles.input}
-        keyboardType="numeric"
-        value={note3}
-        placeholder="Insira a Nota 3"
-        onChangeText={(text) => {
-          if (isNumeric(text) && parseFloat(text) >= 0 && parseFloat(text) <= 100) {
-            setNote3(text);
-          }
-        }}
-      />
-      <View style={styles.buttonContainer}>
-        <Button title="Limpar" onPress={clearNote3} />
+      <View style={styles.inputContainer}>
+        <Text>Nota 3 (opcional):</Text>
+        <TextInput
+          style={styles.input}
+          keyboardType="numeric"
+          value={note3}
+          placeholder="Nota 3"
+          onChangeText={(value) => setNote3(value)}
+        />
+        <Button title="Limpar" onPress={() => clearNote(setNote3)} />
       </View>
 
-      <Button title="Calcular Média" onPress={calculate} />
-      {average !== null && <Text>Média Final: {average}</Text>}
-      <StatusBar style="auto" />
-    </View>
+      <Text style={styles.resultText}>Resultado em Tempo Real:</Text>
+      <Text style={styles.averageText}>Média Final: {average}</Text>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFE4C4',
+    backgroundColor: '#F0F0F0',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  title: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    marginBottom: 20,
+  },
+  instructions: {
+    fontSize: 16,
+    marginBottom: 20,
+  },
+  inputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 20,
   },
   input: {
     borderWidth: 2,
     borderColor: '#000',
-    width: 200,
-    marginBottom: 10,
+    width: 100,
+    marginLeft: 10,
     padding: 10,
     borderRadius: 16,
-    backgroundColor: "#ffffff",
+    backgroundColor: '#ffffff',
   },
-  buttonContainer: {
-    marginBottom: 20,
-    padding: 5,
-    borderRadius: 32,
+  resultText: {
+    marginTop: 20,
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
+  averageText: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    color: '#6a7495',
   },
 });
