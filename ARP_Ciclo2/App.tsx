@@ -87,7 +87,6 @@ export default function App() {
 
       {parseFloat(average) !== 0 && (
         <View style={styles.resultContainer}>
-          <Text style={styles.resultText}>Resultado em Tempo Real:</Text>
           <Text style={styles.resultText}>
             Média Final:{" "}
             <Text style={{ color: averageColor }}>{average}</Text>
