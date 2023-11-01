@@ -1,11 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, TextInput, Button, ScrollView, Pressable } from 'react-native';
+import React, { useState, useEffect } from "react";
+import { StyleSheet, Text, View, TextInput, Button, ScrollView } from "react-native";
 
 export default function App() {
-  const [note1, setNote1] = useState('');
-  const [note2, setNote2] = useState('');
-  const [note3, setNote3] = useState('');
-  const [average, setAverage] = useState('0.00');
+  const [note1, setNote1] = useState("");
+  const [note2, setNote2] = useState("");
+  const [note3, setNote3] = useState("");
+  const [average, setAverage] = useState("0.00");
+  const [averageColor, setAverageColor] = useState("black");
+  const [approvalStatus, setApprovalStatus] = useState("");
 
   const calculate = () => {
     const n1 = parseFloat(note1) || 0;
@@ -18,13 +20,26 @@ export default function App() {
       const sumOfValidNotes = validNotes.reduce((sum, note) => sum + note, 0);
       const averageResult = sumOfValidNotes / validNotes.length;
       setAverage(averageResult.toFixed(2));
+
+      if (averageResult < 60) {
+        setAverageColor("red");
+        setApprovalStatus("Reprovado!");
+      } else if (averageResult >= 60 && averageResult < 70) {
+        setAverageColor("orange");
+        setApprovalStatus("Aprovado por pouco!");
+      } else {
+        setAverageColor("green");
+        setApprovalStatus("Aprovado!");
+      }
     } else {
-      setAverage('0.00');
+      setAverage("0.00");
+      setAverageColor("black");
+      setApprovalStatus("");
     }
   };
 
   const clearNote = (setter) => {
-    setter('');
+    setter("");
     calculate();
   };
 
@@ -35,7 +50,7 @@ export default function App() {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.title}>NotaSegura</Text>
-      <Text style={styles.instructions}>Insira suas notas (0-100):</Text>
+      <Text style={styles.instructions}>Insira suas notas (0 - 100):</Text>
 
       <View style={styles.inputContainer}>
         <Text>Nota 1:</Text>
@@ -68,11 +83,17 @@ export default function App() {
           placeholder="Nota 3"
           onChangeText={(value) => setNote3(value)}
         />
-
       </View>
 
-      <Text style={styles.resultText}>Resultado</Text>
-      <Text style={styles.averageText}>{average}</Text>
+      {parseFloat(average) !== 0 && (
+        <View style={styles.resultContainer}>
+          <Text style={styles.resultText}>Resultado em Tempo Real:</Text>
+          <Text style={[styles.averageText, { color: averageColor }]}>
+            Média Final: {average}
+          </Text>
+          <Text style={styles.approvalStatusText}>{approvalStatus}</Text>
+        </View>
+      )}
     </ScrollView>
   );
 }
@@ -80,13 +101,13 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F0F0F0',
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: "#FFE4C4",
+    alignItems: "center",
+    justifyContent: "center",
   },
   title: {
     fontSize: 28,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 20,
   },
   instructions: {
@@ -94,27 +115,34 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   inputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     marginBottom: 20,
   },
   input: {
     borderWidth: 2,
-    borderColor: '#000',
+    borderColor: "#000",
     width: 100,
     marginLeft: 10,
     padding: 10,
     borderRadius: 16,
-    backgroundColor: '#ffffff',
+    backgroundColor: "#ffffff",
+  },
+  resultContainer: {
+    alignItems: "center",
   },
   resultText: {
     marginTop: 20,
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   averageText: {
     fontSize: 28,
-    fontWeight: 'bold',
-    color: '#6a7495',
+    fontWeight: "bold",
+  },
+  approvalStatusText: {
+    fontSize: 20,
+    fontWeight: "bold",
+    marginTop: 10,
   },
 });
